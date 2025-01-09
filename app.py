@@ -2,12 +2,13 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import joblib
-import matplotlib
+import matplotlib.pyplot as plt
 from collections import Counter
 
 MODEL = joblib.load("new_model.joblib")
 FRQ = [8.17, 1.49, 2.78, 4.25, 12.70, 2.23, 2.02, 6.09, 6.97, 0.15, 0.77, 4.03, 2.41, 6.75, 7.51, 1.93, 0.10, 5.99, 6.33, 9.06, 2.76, 0.98, 2.36, 0.15, 1.97, 0.07]
-
+LABEL = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I','J', 'K', 'L', 'M', 'N', 'O', 
+         'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 # method to encrypt character
 def encrypt_caesar(text, shift):
     text = str(text).lower()
@@ -53,17 +54,15 @@ with tab1:
         predict_shift = decrypt(cipherTxt)
         plaintext = encrypt_caesar(cipherTxt, -predict_shift)
         # count frequency
-        cipher_freq = extact_feature(cipherTxt)
         st.write(f'predicted shift: {predict_shift}')
         st.write(f'result: {plaintext}')
     
-   
-    
-
 with tab2:
     # tab untuk mendapatkan ciphertext dari bahasa inggris
     st.header("inputkan kalimat berbahasa inggris untuk mendapatkan cipher text")
-    txtEnglish = st.text_area(label="input:")
-    shift = st.number_input(label="input shift:", min_value=0, max_value=25)
-    cipher = encrypt_caesar(txtEnglish, int(shift))
-    st.code(body=cipher, wrap_lines=True)
+    with st.form("english", enter_to_submit=False):
+        txtEnglish = st.text_area("input plaintext:")
+        shift = int(st.number_input("kunci geser:", min_value=0, max_value=25))
+        if st.form_submit_button(label="get ciphertext"):
+            ciphertext = encrypt_caesar(txtEnglish, shift)
+            st.code(ciphertext)
